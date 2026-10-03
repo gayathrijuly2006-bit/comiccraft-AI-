@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your Comic — ComicCraft</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <main class="container preview">
+    <header class="preview-header">
+      <div>
+        <div class="badge">YOUR AI-GENERATED STORY</div>
+        <h1>Your Comic Preview</h1>
+        <p>{{ request_data.character_name }} • {{ request_data.setting }} • {{ request_data.tone }} • {{ request_data.art_style }}</p>
+      </div>
+      <a class="secondary" href="/">Create Another</a>
+    </header>
+
+    <section class="comic-grid">
+      {% for panel in layout %}
+      <article class="panel card">
+        <div class="panel-title"><span>Panel {{ panel.panel }}</span><h2>{{ panel.title }}</h2></div>
+        {% if panel.image_path %}<img src="{{ panel.image_path }}" alt="Illustration for panel {{ panel.panel }}">{% endif %}
+        <p class="scene">{{ panel.scene_description }}</p>
+        <div class="text-block"><strong>Caption</strong><p>{{ panel.caption }}</p></div>
+        <div class="text-block"><strong>Narration</strong><p>{{ panel.narration }}</p></div>
+        <div class="dialogue"><strong>Dialogue</strong><p>{{ panel.dialogue }}</p></div>
+        <details>
+          <summary>Image Prompt Reference</summary>
+          <p>{{ panel.image_prompt }}</p>
+        </details>
+      </article>
+      {% endfor %}
+    </section>
+
+    <section class="download card">
+      <h2>Your comic is ready.</h2>
+      <p>The complete five-panel story has been compiled into a PDF.</p>
+      <a class="primary download-link" href="{{ pdf_path }}" download>⬇ Download Your Comic as PDF</a>
+    </section>
+  </main>
+</body>
+</html>

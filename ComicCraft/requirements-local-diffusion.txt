@@ -1,0 +1,7 @@
+# Optional: only install this if you want Stable Diffusion to run locally.
+# It downloads large model weights and normally requires a capable GPU.
+diffusers>=0.33,<1.0
+transformers>=4.50,<5.0
+accelerate>=1.5,<2.0
+torch>=2.6,<3.0
+safetensors>=0.5,<1.0
