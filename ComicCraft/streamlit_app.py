@@ -345,6 +345,44 @@ def create_panel_image(panel_number, scene, art_style):
 # PDF generator
 # ---------------------------------------------------------
 
+def sanitize_pdf_text(value):
+    """
+    Make AI-generated text safer for FPDF's built-in Arial font.
+    Also break very long words/tokens so FPDF never gets a word
+    wider than the available page width.
+    """
+    value = str(value or "")
+
+    replacements = {
+        "\u2018": "'",
+        "\u2019": "'",
+        "\u201c": '"',
+        "\u201d": '"',
+        "\u2013": "-",
+        "\u2014": "-",
+        "\u2026": "...",
+        "\u00a0": " ",
+        "\u2022": "-",
+        "\u2192": "->",
+        "\u2190": "<-",
+    }
+
+    for old_char, new_char in replacements.items():
+        value = value.replace(old_char, new_char)
+
+    # Remove other characters that the built-in Arial font may not support.
+    value = value.encode("latin-1", errors="replace").decode("latin-1")
+
+    # Character-level wrapping prevents FPDFException when Gemini returns
+    # a very long word, URL, identifier, or punctuation sequence.
+    return textwrap.fill(
+        value,
+        width=70,
+        break_long_words=True,
+        break_on_hyphens=True,
+    )
+
+
 def create_pdf(story, image_paths):
     pdf_path = OUTPUT_DIR / "comiccraft_comic.pdf"
 
@@ -353,11 +391,12 @@ def create_pdf(story, image_paths):
 
     pdf.add_page()
 
+    # Title
     pdf.set_font("Arial", "B", 22)
     pdf.cell(
         0,
         15,
-        story.get("title", "ComicCraft Comic"),
+        sanitize_pdf_text(story.get("title", "ComicCraft Comic")),
         ln=True,
         align="C",
     )
@@ -370,7 +409,7 @@ def create_pdf(story, image_paths):
         pdf.cell(
             0,
             10,
-            f"Panel {panel['panel']}",
+            sanitize_pdf_text(f"Panel {panel.get('panel', i + 1)}"),
             ln=True,
         )
 
@@ -384,26 +423,32 @@ def create_pdf(story, image_paths):
 
         pdf.ln(3)
 
+        # Narration
         pdf.set_font("Arial", "I", 11)
+        narration = sanitize_pdf_text(panel.get("narration", ""))
 
-        narration = panel.get("narration", "")
+        if narration:
+            pdf.multi_cell(
+                0,
+                7,
+                narration,
+            )
 
-        pdf.multi_cell(
-            0,
-            7,
-            narration,
-        )
-
+        # Dialogue
         pdf.set_font("Arial", "", 11)
 
         for dialogue in panel.get("dialogue", []):
-            character = dialogue.get("character", "Character")
-            text = dialogue.get("text", "")
+            character = sanitize_pdf_text(
+                dialogue.get("character", "Character")
+            )
+            dialogue_text = sanitize_pdf_text(
+                dialogue.get("text", "")
+            )
 
             pdf.multi_cell(
                 0,
                 7,
-                f"{character}: {text}",
+                f"{character}: {dialogue_text}",
             )
 
         pdf.ln(8)
