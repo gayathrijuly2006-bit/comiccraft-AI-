@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ComicCraft — AI Comic Generator</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="landing">
+  <main class="container hero">
+    <section class="card intro">
+      <div class="badge">✨ GENERATIVE AI COMIC STUDIO</div>
+      <h1>Turn your idea into a comic.</h1>
+      <p>Write a story idea, choose your character and style, and ComicCraft builds a five-panel illustrated story with narration, dialogue and a downloadable PDF.</p>
+    </section>
+
+    <form class="card form-card" action="/generate" method="post" onsubmit="showLoading()">
+      <div class="field">
+        <label for="story_prompt">Story Prompt</label>
+        <textarea id="story_prompt" name="story_prompt" rows="5" required minlength="10" maxlength="4000" placeholder="Example: A young inventor discovers a tiny robot that can hear forgotten memories..."></textarea>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="character_name">Main Character</label>
+          <input id="character_name" name="character_name" required maxlength="100" placeholder="Maya">
+        </div>
+        <div class="field">
+          <label for="setting">Setting</label>
+          <select id="setting" name="setting">
+            <option>Forest</option><option>School</option><option>Futuristic City</option><option>Space Station</option><option>Ancient Kingdom</option><option>Custom</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="tone">Story Tone</label>
+          <select id="tone" name="tone">
+            <option>Funny</option><option>Dramatic</option><option>Adventurous</option><option>Poetic</option><option>Mysterious</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="art_style">Art Style</label>
+          <select id="art_style" name="art_style">
+            <option>Comic book</option><option>Anime</option><option>Pixel art</option><option>Watercolor</option><option>Graphic novel</option><option>Realistic</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="generateBtn" class="primary" type="submit">Generate My Comic <span>→</span></button>
+      <p id="loading" class="loading" hidden>Creating outline → story → illustrations → PDF…</p>
+    </form>
+  </main>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
